@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -18,14 +18,7 @@ const App = () => {
   const [totalHits, setTotalHits] = useState(0);
   const [page, setPage] = useState(1);
 
-  useEffect(() => {
-    if (searchQuery.trim() === '') {
-      return;
-    }
-    fetchImagesData();
-  }, [searchQuery, page]);
-
-  const fetchImagesData = async () => {
+  const fetchImagesData = useCallback(async () => {
     setIsLoading(true);
 
     try {
@@ -42,7 +35,14 @@ const App = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [searchQuery, page]);
+
+  useEffect(() => {
+    if (searchQuery.trim() === '') {
+      return;
+    }
+    fetchImagesData();
+  }, [searchQuery, page, fetchImagesData]);
 
   const handleSearch = query => {
     setSearchQuery(query);
